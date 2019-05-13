@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require "carggo"
+Carggo::CLI.start(ARGV)
