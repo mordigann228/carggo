@@ -69,5 +69,9 @@ module Carggo
         puts "Not a Cargo project directory."
       end
     end
+    desc "version", "shows the current version of Carggo"
+    def version
+      puts Carggo::VERSION
+    end
   end
 end
