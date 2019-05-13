@@ -18,9 +18,9 @@ module Carggo
         version = res["crate"]["max_version"]
         printable_response = "#{name} = '#{version}'"
         puts printable_response
-        return {name: name, version: version}
+        return {name: name, version: version, err: nil}
       rescue
-        puts "Crate not found"
+        return {err: true}
       end
     end
 
@@ -29,18 +29,22 @@ module Carggo
       if File.exists?("Cargo.toml")
         args.each do |lib|
           crate = self.find(lib)
-          name = crate[:name]
-          version = crate[:version]
-          File.open("Cargo.toml", "r+") do |out|
-            File.foreach("Cargo.toml") do |line|
-              if line =~ /#{name}/
-                next
-              end
-              out << line
-              if line =~ /ependen/
-                out << "\n#{name} = '#{version}'"
+          if crate[:err].nil?
+            name = crate[:name]
+            version = crate[:version]
+            File.open("Cargo.toml", "r+") do |out|
+              File.foreach("Cargo.toml") do |line|
+                if line =~ /#{name}/
+                  next
+                end
+                out << line
+                if line =~ /ependen/
+                  out << "\n#{name} = '#{version}'"
+                end
               end
             end
+          else
+            puts "Cannot locate #{lib} or having network issues."
           end
         end
       else

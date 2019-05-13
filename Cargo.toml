@@ -5,3 +5,5 @@ authors = ["Aram Hayrapetyan <aramhrptn@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+
+postgres = '0.16.0-rc.1'
