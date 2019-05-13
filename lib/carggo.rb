@@ -2,6 +2,7 @@ require "carggo/version"
 require "thor"
 require 'net/http'
 require 'json'
+require 'fileutils'
 
 module Carggo
   class Error < StandardError; end
@@ -13,9 +14,11 @@ module Carggo
         escape_uri = URI.escape("https://crates.io/api/v1/crates//#{args}")
         uri = URI.parse(escape_uri)
         res = JSON.parse(Net::HTTP.get(uri))
-        printable_response = "#{res["crate"]["name"]} = #{res["crate"]["max_version"]}"
+        name = res["crate"]["name"]
+        version = res["crate"]["max_version"]
+        printable_response = "#{name} = '#{version}'"
         puts printable_response
-        return res
+        return {name: name, version: version}
       rescue
         puts "Crate not found"
       end
@@ -26,16 +29,16 @@ module Carggo
       if File.exists?("Cargo.toml")
         args.each do |lib|
           crate = self.find(lib)
-          name = crate["crate"]["name"]
-          version = crate["crate"]["max_version"]
-          cargo = File.open("Cargo.toml", "r+") do |out|
+          name = crate[:name]
+          version = crate[:version]
+          File.open("Cargo.toml", "r+") do |out|
             File.foreach("Cargo.toml") do |line|
               if line =~ /#{name}/
                 next
               end
               out << line
               if line =~ /ependen/
-                out << "#{name} = '#{version}'\n"
+                out << "\n#{name} = '#{version}'"
               end
             end
           end
@@ -45,9 +48,22 @@ module Carggo
       end
     end
 
-    # desc "remove", "removes the specified dependency"
-    # def remove(*args)
-    #   p args
-    # end
+    desc "remove", "removes the specified dependency"
+    def remove(*args)
+      if File.exists?("Cargo.toml")
+        args.each do |lib|
+          open("Cargo.toml", 'r') do |out|
+            open("Cargo.toml.tmp", 'w') do |out2|
+              out.each_line do |line|
+                out2.write(line) unless line.start_with? lib
+              end
+            end
+          end
+        end
+        FileUtils.mv 'Cargo.toml.tmp', 'Cargo.toml'
+      else
+        puts "Not a Cargo project directory."
+      end
+    end
   end
 end
