@@ -26,8 +26,13 @@ module Carggo
       if File.exists?("Cargo.toml")
         args.each do |lib|
           crate = self.find(lib)
-          cargo = File.open("Cargo.toml", "a")
-          cargo << "[dependencies]\n#{crate["crate"]["name"]} = '#{crate["crate"]["max_version"]}'\n"
+          cargo = File.open("Cargo.toml", "w") do |out|
+            File.foreach("Cargo.toml") do |line|
+              if line =~ /dependencies/
+                out.puts "[dependencies]\n#{crate["crate"]["name"]} = '#{crate["crate"]["max_version"]}'\n"
+              end
+            end
+          end
         end
       else
         puts "Not a Cargo project directory."
