@@ -29,7 +29,7 @@ module Carggo
           cargo = File.open("Cargo.toml", "a") do |out|
             File.foreach("Cargo.toml") do |line|
               if line =~ /dependencies/
-                out.puts "[dependencies]\n#{crate["crate"]["name"]} = '#{crate["crate"]["max_version"]}'\n"
+                out.puts "\n#{crate["crate"]["name"]} = '#{crate["crate"]["max_version"]}'\n"
               end
             end
           end
