@@ -28,7 +28,8 @@ module Carggo
           crate = self.find(lib)
           cargo = File.open("Cargo.toml", "a") do |out|
             File.foreach("Cargo.toml") do |line|
-              if line =~ /dependencies/
+              puts line
+              if line =~ /ependen/
                 out.puts "\n#{crate["crate"]["name"]} = '#{crate["crate"]["max_version"]}'\n"
               end
             end
