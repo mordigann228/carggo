@@ -8,7 +8,7 @@
 
     $ carggo find postgres #=> postgres = 0.16.0-rc.1
 
-    $ carggo add postgres #=> go to your Cargo.toml file :))
+    $ carggo add postgres rand ... #=> go to your Cargo.toml file :))
 
 ## Development
 

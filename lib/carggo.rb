@@ -26,15 +26,16 @@ module Carggo
       if File.exists?("Cargo.toml")
         args.each do |lib|
           crate = self.find(lib)
+          name = crate["crate"]["name"]
+          version = crate["crate"]["max_version"]
           cargo = File.open("Cargo.toml", "r+") do |out|
             File.foreach("Cargo.toml") do |line|
-              # puts line.is_a? String
+              if line =~ /#{name}/
+                next
+              end
               out << line
               if line =~ /ependen/
-                if line =~ Regexp.new(crate["crate"]["name"])
-                  next
-                end
-                out << "#{crate["crate"]["name"]} = '#{crate["crate"]["max_version"]}'\n"
+                out << "#{name} = '#{version}'\n"
               end
             end
           end
