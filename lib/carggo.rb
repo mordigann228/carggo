@@ -26,7 +26,7 @@ module Carggo
       if File.exists?("Cargo.toml")
         args.each do |lib|
           crate = self.find(lib)
-          cargo = File.open("Cargo.toml", "w") do |out|
+          cargo = File.open("Cargo.toml", "a") do |out|
             File.foreach("Cargo.toml") do |line|
               if line =~ /dependencies/
                 out.puts "[dependencies]\n#{crate["crate"]["name"]} = '#{crate["crate"]["max_version"]}'\n"
